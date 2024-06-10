@@ -1,16 +1,24 @@
-// Create your game here!
-
 const element = document.getElementById("app");
 
-let numberOfTry = 10;
-
+let timeRemained = 10;
 const header = document.createElement("h2");
 element.appendChild(header);
 
 function updateHeaderMessage() {
-  header.textContent = `You have ${numberOfTry} guesses remaining.`;
+  header.textContent = `You have ${timeRemained} seconds remaining to remember the pictures`;
 }
 updateHeaderMessage();
+
+
+const countdownInterval = setInterval(() => {
+  timeRemained--;
+  updateHeaderMessage();
+  if (timeRemained <= 0) {
+    clearInterval(countdownInterval);
+    hideImages();
+    startGuessing();
+  }
+}, 1000);
 
 const table = document.createElement("table");
 const tbody = document.createElement("tbody");
@@ -33,6 +41,9 @@ const images = [
   "https://images.unsplash.com/photo-1508726295872-0b87b9999406?q=80&w=1527&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 
+const duplicatedImages = images.concat(images); // Create pairs of images
+duplicatedImages.sort(() => 0.5 - Math.random()); // Shuffle the images
+
 let number = 0;
 for (let i = 0; i < 5; i++) {
   const row = document.createElement("tr");
@@ -40,11 +51,13 @@ for (let i = 0; i < 5; i++) {
     const cell = document.createElement("td");
     number++;
     const img = document.createElement("img");
-    img.src = images[number - 1];
+    img.src = duplicatedImages[number - 1];
     img.style.width = "100px";
-    img.style.height= "100px";
+    img.style.height = "150px";
     img.dataset.number = number;
+    img.dataset.src = duplicatedImages[number - 1];
     cell.appendChild(img);
+
     row.appendChild(cell);
   }
   tbody.appendChild(row);
@@ -52,59 +65,53 @@ for (let i = 0; i < 5; i++) {
 table.appendChild(tbody);
 element.appendChild(table);
 
-const RandomNum = Math.floor(Math.random() * 100) + 1;
-console.log(`Target number: ${RandomNum}`);
+function hideImages() {
+  const cells = document.querySelectorAll("td img");
+  cells.forEach(cell => {
+    cell.style.visibility = 'hidden'; 
+  });
+}
 
-// function nextGuess() {
-//   if (numberOfTry > 0) {
-//     setTimeout(() => {
-//       const guess = parseInt(
-//         window.prompt(
-//           `Guess a number between 1 and 100. You have ${numberOfTry} guesses remaining.`
-//         ),
-//         10
-//       );
 
-//       if (isNaN(guess) || guess < 1 || guess > 100) {
-//         alert("Please enter a valid number between 1 and 100.");
-//         nextGuess();
-//         return;
-//       }
+let firstGuess = null;
+let secondGuess = null;
 
-//       const cells = document.querySelectorAll("td");
-//       let correctGuess = false;
+function startGuessing() {
+  const cells = document.querySelectorAll("td img");
 
-//       cells.forEach((cell) => {
-//         const cellNumber = parseInt(cell.dataset.number, 10);
-//         if (cellNumber === guess) {
-//           if (cellNumber === RandomNum) {
-//             cell.classList.add("correct");
-//             alert("Correct!!!");
-//             correctGuess = true;
-//           } else {
-//             cell.classList.add("incorrect");
-//           }
-//         }
-//       });
+  cells.forEach(cell => {
+    cell.parentElement.addEventListener('click', () => {
+      if (!firstGuess) {
+        firstGuess = cell;
+        cell.style.visibility = 'visible';
+      } else if (!secondGuess && cell !== firstGuess) {
+        secondGuess = cell;
+        cell.style.visibility = 'visible';
 
-//       if (correctGuess) {
-//         return;
-//       } else {
-//         alert(
-//           `Incorrect! The target number is ${
-//             RandomNum > guess ? "higher" : "lower"
-//           } than ${guess}.`
-//         );
-//       }
+        if (firstGuess.dataset.src === secondGuess.dataset.src) {
+          alert("Correct!");
+          firstGuess = null;
+          secondGuess = null;
+        } else {
+          setTimeout(() => {
+            firstGuess.style.visibility = 'hidden';
+            secondGuess.style.visibility = 'hidden';
+            firstGuess = null;
+            secondGuess = null;
+          }, 1000);
+        }
 
-//       numberOfTry--;
-//       updateHeaderMessage();
+        numberOfTry--;
+        updateHeaderMessage();
+        if (numberOfTry === 0) {
+          alert("Game over!");
+          window.location.reload(); // Restart the game
+        }
+      }
+    });
+  });
+}
 
-//       setTimeout(nextGuess, 100);
-//     }, 10);
-//   } else {
-//     alert(`Game over! The target number was ${RandomNum}.`);
-//   }
-// }
-
-// setTimeout(nextGuess, 4000);
+// Show images for 40 seconds, then hide them
+setTimeout(hideImages, 10000);
+setTimeout(startGuessing, 10000);

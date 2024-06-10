@@ -44,4 +44,7 @@ body {
   table {
     margin: 0 auto;
   }
+  table tbody tr td {
+    border: 1px solid black;
+  }
   
