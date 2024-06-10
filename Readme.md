@@ -2,14 +2,7 @@
 
 ## Overview
 
-**PicTrivia**  is a simple game made with JavaScript. You have 10 seconds to look at a set of pictures, remember their positions, and then try to guess their positions correctly. This single-page application also includes a form. When users win the game, they can submit the form to claim their prizes.
-
-
-
-
-## Demo
-
-check the liv demo here:
+**PicTrivia** is a simple game made with JavaScript. You have 10 seconds to look at a set of pictures, remember their positions, and then try to guess their positions correctly. This single-page application also includes a form. When users win the game, they can submit the form to claim their prizes.
 
 ## Features
 
@@ -37,27 +30,25 @@ check the liv demo here:
 To set up the project locally, follow these steps:
 
 1. **Clone the repository**:
-    ```sh
-    git clone https://github.com/zahrajoulaei/PicTrivia
-    ```
+
+   ```sh
+   git clone https://github.com/zahrajoulaei/PicTrivia
+   ```
 
 2. **Navigate to the project directory**:
-    ```sh
-    cd PicTrivia
-    ```
+
+   ```sh
+   cd PicTrivia
+   ```
 
 3. **Install Bootstrap and dependencies**:
-    ```sh
-    npm install bootstrap
-    ```
-
-
+   ```sh
+   npm install bootstrap
+   ```
 
 ## Sceenshots
 
 ![Pages](./src/image.png)
-
-
 
 ## Contact
 
