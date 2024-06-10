@@ -9,7 +9,6 @@ function updateHeaderMessage() {
 }
 updateHeaderMessage();
 
-
 const countdownInterval = setInterval(() => {
   timeRemained--;
   updateHeaderMessage();
@@ -44,11 +43,15 @@ const images = [
 const duplicatedImages = images.concat(images); // Create pairs of images
 duplicatedImages.sort(() => 0.5 - Math.random()); // Shuffle the images
 
+//create the table and pictures
+const fragment = document.createDocumentFragment();
+
 let number = 0;
 for (let i = 0; i < 5; i++) {
   const row = document.createElement("tr");
   for (let j = 0; j < 6; j++) {
     const cell = document.createElement("td");
+
     number++;
     const img = document.createElement("img");
     img.src = duplicatedImages[number - 1];
@@ -57,21 +60,21 @@ for (let i = 0; i < 5; i++) {
     img.dataset.number = number;
     img.dataset.src = duplicatedImages[number - 1];
     cell.appendChild(img);
-
     row.appendChild(cell);
   }
-  tbody.appendChild(row);
+  fragment.appendChild(row);
+  tbody.appendChild(fragment);
 }
 table.appendChild(tbody);
 element.appendChild(table);
 
+//hide images after 10 seconds
 function hideImages() {
   const cells = document.querySelectorAll("td img");
-  cells.forEach(cell => {
-    cell.style.visibility = 'hidden'; 
+  cells.forEach((cell) => {
+    cell.style.visibility = "hidden";
   });
 }
-
 
 let firstGuess = null;
 let secondGuess = null;
@@ -79,23 +82,23 @@ let secondGuess = null;
 function startGuessing() {
   const cells = document.querySelectorAll("td img");
 
-  cells.forEach(cell => {
-    cell.parentElement.addEventListener('click', () => {
+  cells.forEach((cell) => {
+    cell.parentElement.addEventListener("click", () => {
       if (!firstGuess) {
         firstGuess = cell;
-        cell.style.visibility = 'visible';
+        cell.style.visibility = "visible";
       } else if (!secondGuess && cell !== firstGuess) {
         secondGuess = cell;
-        cell.style.visibility = 'visible';
+        cell.style.visibility = "visible";
 
         if (firstGuess.dataset.src === secondGuess.dataset.src) {
-          alert("Correct!");
+          alert("Correct! you gussed the correct image!!!!");
           firstGuess = null;
           secondGuess = null;
         } else {
           setTimeout(() => {
-            firstGuess.style.visibility = 'hidden';
-            secondGuess.style.visibility = 'hidden';
+            firstGuess.style.visibility = "hidden";
+            secondGuess.style.visibility = "hidden";
             firstGuess = null;
             secondGuess = null;
           }, 1000);
@@ -105,13 +108,109 @@ function startGuessing() {
         updateHeaderMessage();
         if (numberOfTry === 0) {
           alert("Game over!");
-          window.location.reload(); // Restart the game
+          window.location.reload(); // Restart the game //BOM usage
         }
       }
     });
   });
 }
-
-// Show images for 40 seconds, then hide them
+// Show images for 10 seconds, then hide them
 setTimeout(hideImages, 10000);
 setTimeout(startGuessing, 10000);
+
+//form
+
+function createForm() {
+  const formEl = document.getElementById("form");
+  const form = document.createElement("form");
+  form.classList.add("p-4", "bg-light", "border", "rounded", "shadow");
+
+  // Name input
+  const nameLabel = document.createElement("label");
+  nameLabel.textContent = "Name:";
+  nameLabel.classList.add("form-label", "mt-3");
+  const nameInput = document.createElement("input");
+  nameInput.type = "text";
+  nameInput.name = "name";
+  nameInput.classList.add("form-control");
+  nameInput.required = true;
+
+  // Email input
+  const emailLabel = document.createElement("label");
+  emailLabel.textContent = "Email:";
+  emailLabel.classList.add("form-label", "mt-3");
+  const emailInput = document.createElement("input");
+  emailInput.type = "email";
+  emailInput.name = "email";
+  emailInput.classList.add("form-control");
+  emailInput.required = true;
+
+  // Phone input
+  const phoneLabel = document.createElement("label");
+  phoneLabel.textContent = "Phone:";
+  phoneLabel.classList.add("form-label", "mt-3");
+  const phoneInput = document.createElement("input");
+  phoneInput.type = "tel";
+  phoneInput.name = "phone";
+  phoneInput.classList.add("form-control");
+  phoneInput.required = true;
+
+  // Date of birth input
+  const dobLabel = document.createElement("label");
+  dobLabel.textContent = "Date of Birth:";
+  dobLabel.classList.add("form-label", "mt-3");
+  const dobInput = document.createElement("input");
+  dobInput.type = "date";
+  dobInput.name = "dob";
+  dobInput.classList.add("form-control");
+  dobInput.required = true;
+
+  // Submit button
+  const submitButton = document.createElement("button");
+  submitButton.type = "submit";
+  submitButton.textContent = "Submit";
+  submitButton.classList.add("btn", "btn-primary", "mt-4");
+
+  // Append all elements to the form
+  form.appendChild(nameLabel);
+  form.appendChild(nameInput);
+  form.appendChild(emailLabel);
+  form.appendChild(emailInput);
+  form.appendChild(phoneLabel);
+  form.appendChild(phoneInput);
+  form.appendChild(dobLabel);
+  form.appendChild(dobInput);
+  form.appendChild(submitButton);
+
+  formEl.appendChild(form);
+
+  // Form submission event
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const emailValue = emailInput.value;
+    const phoneValue = phoneInput.value;
+
+    if (!validateEmail(emailValue)) {
+      alert("Invalid email format");
+    } else if (!validatePhone(phoneValue)) {
+      alert("Invalid phone number");
+    } else {
+      alert("Form submitted successfully");
+      form.reset();
+      window.location.reload();
+    }
+  });
+}
+
+createForm();
+
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email); // Using .test method for regex
+}
+
+function validatePhone(phone) {
+  const re = /^\d{10}$/;
+  return re.test(phone); // Using .test method for regex
+}
